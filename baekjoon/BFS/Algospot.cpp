@@ -19,7 +19,7 @@ int dy[4] = { 0,0,1,-1 };
 int bfs(int n, int m)
 {
 	int cnt = 0;
-	pq.push({ 0, {1,1} });
+	pq.push({ 0, { 1,1 } });
 	visit[1][1] = true;
 
 	while (!pq.empty())
@@ -28,33 +28,33 @@ int bfs(int n, int m)
 		int x = pq.top().second.second;
 		int c = pq.top().first;
 
-		pq.pop();
+		pq.pop(); // pop 중요!
 
-		if (y == n && x == m)
+		if (x == m && y == n)
 		{
 			cnt = c;
 			break;
 		}
 
-		for (int i = 0; i < 4; i++) // 상하좌우 이동
+		for (int i = 0; i < 4; i++) // 상하좌우 탐색
 		{
 			int ny = y + dy[i];
 			int nx = x + dx[i];
 
-			if (visit[ny][nx])
+			if (visit[ny][nx]) // 이미 방문했을 경우
 			{
 				continue;
 			}
 
-			if (ny >= 1 && nx >= 1 && ny <= n && nx <= m)
+			if (nx > 0 && ny > 0 && nx <= m && ny <= n) // 범위 벗어날 경우
 			{
 				visit[ny][nx] = true;
 
-				if (pos[ny][nx] == 1)
+				if (pos[ny][nx] == 1) // 벽이 있을 경우
 				{
-					pq.push({ c + 1, { ny, nx } });
+					pq.push({ c + 1, {ny, nx} });
 				}
-				else
+				else // 벽이 없을 경우
 				{
 					pq.push({ c, {ny, nx} });
 				}
@@ -77,11 +77,11 @@ int main()
 		for (int j = 1; j <= M; j++)
 		{
 			cin >> input;
-			pos[i][j] = input - '0';
+			pos[i][j] = input - '0'; // 문자를 숫자로
 		}
 	}
 
 	cout << bfs(N, M) << endl;
-
+	
 	return 0;
 }
