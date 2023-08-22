@@ -6,83 +6,66 @@
 
 using namespace std;
 
-typedef pair<int, int> pos;
-typedef pair<int, pos> ipos;
+typedef struct pos
+{
+	int x;
+	int y;
+	int wall;
+};
 
-queue<ipos> q;
-
-vector<pair<int, int>> wall;
+queue<pos> q;
 
 int map[MAX][MAX];
-bool visit[MAX][MAX];
+int visited[MAX][MAX][2]; // 벽 부숨 여부 체크
 
 int dx[4] = { 1,0,-1,0 };
 int dy[4] = { 0,1,0,-1 };
 
 int N, M;
-int result = MAX;
 
-void bfs()
+int bfs()
 {
-	q.push({ 1, { 1,1 } });
-	visit[1][1] = true;
+	visited[1][1][0] = 1;
+	q.push({ 1, 1, 0 });
 
 	while (!q.empty())
 	{
-		int cnt = q.front().first;
-		int x = q.front().second.first;
-		int y = q.front().second.second;
+		pos cur = q.front();
 
 		q.pop();
 
-		if (x == N && y == M)
+		if (cur.x == N && cur.y == M)
 		{
-			result = min(result, cnt);
-
-			return;
+			return visited[cur.x][cur.y][cur.wall];
 		}
 
 		for (int i = 0; i < 4; i++)
 		{
-			int nx = x + dx[i];
-			int ny = y + dy[i];
+			pos next;
 
-			if (nx < 1 || ny < 1 || nx > N || ny > M) continue;
-			if (visit[nx][ny]) continue;
+			next.x = cur.x + dx[i];
+			next.y = cur.y + dy[i];
+			next.wall = cur.wall;
+			
+			if (next.x < 1 || next.y < 1 || next.x > N || next.y > M) continue;
+			if (visited[next.x][next.y][cur.wall]) continue;
 
-			if (map[nx][ny] == 0)
+			if (map[next.x][next.y] == 0) // 벽이 없다면 이동
 			{
-				visit[nx][ny] = true;
-				q.push({ cnt + 1, { nx, ny } });
+				visited[next.x][next.y][next.wall] = visited[cur.x][cur.y][cur.wall] + 1;
+				q.push({ next.x, next.y, cur.wall });
+			}
+
+			if (map[next.x][next.y] == 1 && next.wall == 0) // 벽 하나 부수기
+			{
+				visited[next.x][next.y][1] = visited[cur.x][cur.y][cur.wall] + 1;
+				next.wall = 1;
+				q.push(next);
 			}
 		}
 	}
-}
 
-void init_visit()
-{
-	for (int i = 1; i <= N; i++)
-	{
-		for (int j = 1; j <= M; j++)
-		{
-			visit[i][j] = false;
-		}
-	}
-}
-
-void wall_breaker() /// 시간초과!!!
-{
-	for (int i = 0; i < wall.size(); i++)
-	{
-		int x = wall[i].first;
-		int y = wall[i].second;
-
-		init_visit();
-
-		map[x][y] = 0;
-		bfs();
-		map[x][y] = 1;
-	}
+	return -1;
 }
 
 void input()
@@ -96,11 +79,6 @@ void input()
 			cin >> ch;
 
 			map[i][j] = ch - '0';
-
-			if (map[i][j] == 1)
-			{
-				wall.push_back({ i, j });
-			}
 		}
 	}
 }
@@ -111,13 +89,7 @@ int main()
 
 	input();
 
-	bfs();
-
-	wall_breaker();
-
-	result = result == MAX ? -1 : result;
-
-	cout << result << endl;
+	cout << bfs();
 
 	return 0;
 }
