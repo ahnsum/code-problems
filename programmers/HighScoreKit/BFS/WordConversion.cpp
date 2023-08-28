@@ -4,7 +4,7 @@
 
 using namespace std;
 
-bool check_diff(string begin, string word)
+bool check_diff(string begin, string word) // 다른 알파벳이 하나만 있는지 체크
 {
     int cnt = 0;
     int len = word.size();
@@ -24,7 +24,7 @@ int bfs(string begin, string target, vector<string> words)
 {
     int answer = 100;
     queue<pair<string, int>> q;
-    bool visited[51] = {0};
+    bool visited[51] = {0}; // 초기화
     
     q.push({begin, 0});
     
@@ -58,7 +58,7 @@ int solution(string begin, string target, vector<string> words)
     
     answer = bfs(begin, target, words);
     
-    answer = (answer == 100) ? 0 : answer;
+    answer = (answer == 100) ? 0 : answer; // 변환할 수 없는 경우 0 반환
     
     return answer;
 }
