@@ -6,9 +6,9 @@
 using namespace std;
 
 bool visited[10001] = { 0 };
-int cnt = 0;
-vector<string> path;
 bool check = false;
+vector<string> path;
+int cnt = 0;
 
 void dfs(vector<vector<string>> tickets, string cur)
 {
