@@ -1,6 +1,7 @@
-#include <string>
+#include <iostream>
 #include <vector>
 #include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -22,11 +23,10 @@ bool check_diff(string begin, string word) // 다른 알파벳이 하나만 있�
 
 int bfs(string begin, string target, vector<string> words)
 {
-    int answer = 100;
     queue<pair<string, int>> q;
     bool visited[51] = {0}; // 초기화
     
-    q.push({begin, 0});
+    q.push({ begin, 0 });
     
     while(!q.empty())
     {
@@ -37,28 +37,43 @@ int bfs(string begin, string target, vector<string> words)
         
         if (word == target)
         {
-            answer = min(answer, cnt);
+            return cnt;
         }
         
         for (int i = 0; i < words.size(); i++)
         {
             if (visited[i] || !check_diff(word, words[i])) continue;
             
-            q.push({words[i], cnt+1});
+            q.push({ words[i], cnt+1 });
             visited[i] = true;
         }
     }
     
-    return answer;
+    return 0;
 }
 
 int solution(string begin, string target, vector<string> words) 
 {
     int answer = 0;
-    
-    answer = bfs(begin, target, words);
-    
-    answer = (answer == 100) ? 0 : answer; // 변환할 수 없는 경우 0 반환
+    auto it = find(words.begin(), words.end(), target);
+
+    if (it != words.end())
+    {
+        answer = bfs(begin, target, words);
+    }
     
     return answer;
+}
+
+int main()
+{
+	vector<string> words = { "hot", "dot", "dog", "lot", "log", "cog" };
+	//vector<string> words = { "hot", "dot", "dog", "lot", "log" };
+	
+	string begin = "hit";
+	string target = "cog";
+
+	cout << solution(begin, target, words) << endl;
+
+	return 0;
 }
